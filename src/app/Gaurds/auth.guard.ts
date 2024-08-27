@@ -1,15 +1,28 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../Services/auth.service';
+import { tap } from 'rxjs';
 
 export const authGuard: CanActivateFn = (route, state) => {
-  var isUserAuthenticated = inject(AuthService).isUserLoggedIn;
+  var authService=inject(AuthService);
+  var isUserAuthenticated = inject(AuthService).UserLoggedIn();
   var router = inject(Router);
-  var accessToken = localStorage.getItem('accestoken');
   
-  if(isUserAuthenticated===true && accessToken!==null && accessToken.length>0){
+  if(isUserAuthenticated===true){
     return true;
   }
-  router.navigateByUrl('/login');
-  return false;
+  else{
+    return authService.refreshUser().pipe(
+      tap((res)=>{
+        if(res){
+          return true;
+        }
+        else{
+          router.navigateByUrl('/login');
+          return false;
+        }
+      })
+    )
+  }
+
 };

@@ -21,4 +21,12 @@
       <span class="line"></span>
       <span class="line"></span>
     </div>
+    <button (click)="logOut()">
+      Log Out
+    </button>
   </nav>
+  <div>
+      <div *ngFor="let item of product">
+        {{item|json}}
+      </div>
+  </div>
